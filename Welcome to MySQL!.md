@@ -147,9 +147,105 @@ Specifier	Description
 %%	A literal % character
 %x	x, for any “x” not listed above
 
--- Changing datatype of variable
+-- CAST Changing datatype of variable
 -- SQL will generally be smart enough to figure out datatypes
 -- format: CAST(value AS new_type)
 SELECT 1 + '2';  <- 3
 SELECT 1 + CAST('2' AS UNSIGNED);
 
+-- GROUP BY
+USE chipotle;
+SELECT * FROM orders;
+
+-- find all unique items with chicken
+SELECT DISTINCT item_name
+	FROM orders
+    WHERE item_name LIKE '%chicken%';
+SELECT item_name
+	FROM orders
+    WHERE item_name LIKE '%chicken%'
+    GROUP BY item_name;
+    
+-- can group by multiple variables
+-- find all unique combinations of chicken and their quantity
+
+-- if we try to use a function without making it an agragate function, 
+-- it will return the quantity ordered at one time for each item
+-- this will create multiple rows for each item
+SELECT item_name, quantity
+	FROM orders
+    WHERE item_name LIKE '%chicken%'
+    GROUP BY item_name, quantity
+    ORDER BY item_name;
+    
+-- to get a total count    
+SELECT item_name, COUNT(*)
+	FROM orders
+    WHERE item_name LIKE '%chicken%'
+    GROUP BY item_name
+    ORDER BY item_name;
+
+-- this will show how many times an item was ordered at each quantity per order
+SELECT item_name, quantity, COUNT(*)
+	FROM orders
+    WHERE item_name LIKE '%chicken%'
+    GROUP BY item_name, quantity
+    ORDER BY item_name;
+
+-- HAVING
+-- acts similar to WHERE but affecting items from GROUP BY
+SELECT item_name, COUNT(item_name) AS count_items
+	FROM orders
+	WHERE item_name LIKE '%chicken%'
+    GROUP BY item_name
+    HAVING count_items > 100
+    ORDER BY item_name;
+
+-- JOINS
+-- (INNER) JOIN will link tables together, returning ONLY values with matching fields
+
+-- tables are matched to each other based on the field specified in the ON command or USING
+-- ON departments.emp_no = employees.emp_no
+
+SELECT r.name, COUNT(*)
+FROM roles r
+	JOIN users u
+	ON r.id = u.role_id
+GROUP BY r.name;
+
+-- or if the table names are the same we can use USING
+-- USING (emp_no)
+
+SELECT d.dept_name AS 'Department Name', 
+	CONCAT(e.first_name, ' ', e.last_name) AS 'Department Manager'
+FROM departments d
+	JOIN dept_manager dm
+		USING (dept_no)
+	JOIN employees e
+		USING (emp_no)
+WHERE dm.to_date = '9999-01-01'
+ORDER BY d.dept_name;
+
+
+-- SUB QUERIES
+-- can return a single scalar value OR a row of values OR a whole table
+
+-- 1. Create sub query
+SELECT AVG(salary)
+FROM salaries;
+
+-- 2 create outer query
+SELECT *
+FROM salaries
+WHERE salary > 0;
+
+-- 3 combine queries, inner query must be placed inside () and remove ; from inner query
+SELECT *
+FROM salaries
+WHERE salary > (
+	SELECT AVG(salary)
+	FROM salaries)
+;
+
+-- CASE statements
+-- SQL version of an IF/THEN statement
