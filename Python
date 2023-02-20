@@ -1,0 +1,33 @@
+Python
+
+# <-- hashtag is comment in python
+
+MATH
+
+3 + 5 # add
+8
+
+- # subtract
+
+3 ** 2 #exponent
+
+3 // 2 = 1 # //=numerator
+
+9 % 2 = 1 # % = remainder (modulus)
+
+#find day of week 17 days from now
+(17 % 7) + day of week today 
+
+PRINTING TEXT
+print('text to print')
+
+or
+
+text = 'text to print'
+print(text)
+
+WHEN in markdown
+--- will create a line 
+`text` will format the text differently
+```python will format text as code
+```       end code formatted text
